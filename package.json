@@ -1,12 +1,18 @@
 {
   "name": "@morlay/my-rx-addons",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "license": "WTFPL",
   "bin": {
-    "my-rx-addons": "./bin/my-rx-addons"
+    "my-rx-addons": "./bin/my-rx-addons.js"
   },
+  "files": [
+    "dist/",
+    "src/",
+    "bin/"
+  ],
   "scripts": {
-    "test": "tsc && ./bin/my-rx-addons.js src/example/** -o src/example/my-rx-addons.ts",
+    "build": "rm -rf dist && tsc",
+    "test": "npm run build && yarn link && my-rx-addons src/example/** -o src/example/my-rx-addons.ts",
     "example": "ts-node ./src/examples/codes-with-rx.ts"
   },
   "peerDependencies": {
