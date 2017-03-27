@@ -1,0 +1,30 @@
+{
+  "name": "@morlay/my-rx-addons",
+  "version": "0.0.0",
+  "license": "WTFPL",
+  "bin": {
+    "my-rx-addons": "./bin/my-rx-addons"
+  },
+  "scripts": {
+    "test": "tsc && ./bin/my-rx-addons.js src/example/** -o src/example/my-rx-addons.ts",
+    "example": "ts-node ./src/examples/codes-with-rx.ts"
+  },
+  "peerDependencies": {
+    "typescript": "2.2.x"
+  },
+  "devDependencies": {
+    "rxjs": "5.2.x",
+    "ts-node": "3.0.x",
+    "tslint": "4.5.1",
+    "typescript": "2.2.x"
+  },
+  "dependencies": {
+    "@types/fs-extra": "2.0.x",
+    "@types/glob": "5.0.x",
+    "@types/node": "7.0.x",
+    "@types/yargs": "6.6.x",
+    "fs-extra": "2.1.x",
+    "glob": "7.1.x",
+    "yargs": "7.0.x"
+  }
+}

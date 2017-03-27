@@ -1,0 +1,8 @@
+node_modules/
+dist/
+
+*.jsx
+*.js
+*.js.map
+
+*.log
