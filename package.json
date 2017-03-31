@@ -1,6 +1,6 @@
 {
   "name": "@morlay/my-rx-addons",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "WTFPL",
   "bin": {
     "my-rx-addons": "./bin/my-rx-addons.js"
@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "npm run build && yarn link && my-rx-addons src/example/** -o src/example/my-rx-addons.ts",
+    "test": "ts-node ./src/command.ts src/example/** -o src/example/my-rx-addons.ts",
     "example": "ts-node ./src/examples/codes-with-rx.ts"
   },
   "peerDependencies": {
@@ -21,7 +21,7 @@
   "devDependencies": {
     "rxjs": "5.2.x",
     "ts-node": "3.0.x",
-    "tslint": "4.5.1",
+    "tslint": "5.0.x",
     "typescript": "2.2.x"
   },
   "dependencies": {

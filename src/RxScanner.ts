@@ -17,20 +17,40 @@ export class RxScanner {
     return new RxScanner()
   }
 
-  private rxAddons: { [key: string]: string } = {}
-  private usedMethods: { [key: string]: true } = {}
+  private rxClasses: { [key: string]: string } = {}
+  private rxOperators: { [key: string]: string } = {}
+  private rxObservables: { [key: string]: string } = {}
+  private usedClasses: { [key: string]: true } = {}
+  private usedOperators: { [key: string]: true } = {}
+  private usedObservables: { [key: string]: true } = {}
 
   constructor() {
-    this.readRxAddons()
+    this.readRxMethods()
   }
 
-  readRxAddons() {
-    const files = glob.sync("node_modules/rxjs/add/**/*.js")
-    files.forEach((file: string) => {
-      const pkgName = path.dirname(file.replace("node_modules/", ""))
-      const methodName = path.basename(file, ".js")
-      this.rxAddons[methodName] = path.join(pkgName, methodName)
-    })
+  isRxClass(className: string): boolean {
+    return !!this.rxClasses[className]
+  }
+
+  readRxMethods() {
+    const addons = glob.sync("node_modules/rxjs/add/**/*.js")
+    const classes = glob.sync("node_modules/rxjs/*.js")
+
+    addons
+      .concat(classes)
+      .forEach((file: string) => {
+        const pkgName = path.dirname(file.replace("node_modules/", ""))
+        const methodName = path.basename(file, ".js")
+        if (pkgName.indexOf("operator") > -1) {
+          this.rxOperators[methodName] = path.join(pkgName, methodName)
+        }
+        if (pkgName.indexOf("observable") > -1) {
+          this.rxObservables[methodName] = path.join(pkgName, methodName)
+        }
+        if (pkgName == "rxjs") {
+          this.rxClasses[methodName] = path.join(pkgName, methodName)
+        }
+      })
   }
 
   createRxMethodVisit = (checker: ts.TypeChecker) =>
@@ -41,12 +61,25 @@ export class RxScanner {
         if (callExpr.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
           const propertyAccessExpression = (callExpr.expression as ts.PropertyAccessExpression)
           const callerName = propertyAccessExpression.name
+          const callerNameText = callerName.getText()
 
           const targetCallSignature = checker.getResolvedSignature(callExpr)
           const returnType = targetCallSignature.getReturnType()
-
           if (isTypeDeclaredInRxPkg(returnType)) {
-            this.collectMethod(callerName.text)
+            if (propertyAccessExpression.expression.kind === ts.SyntaxKind.Identifier) {
+              const id = propertyAccessExpression.expression as ts.Identifier
+              const idType = checker.getTypeAtLocation(id)
+              const className = checker.symbolToString(idType.getSymbol())
+              const idNameText = id.getText()
+              if (className === idNameText) {
+                this.usedClasses[className] = true
+                this.usedObservables[callerNameText] = true
+              } else {
+                this.usedOperators[callerNameText] = true
+              }
+            } else {
+              this.usedOperators[callerNameText] = true
+            }
           }
         }
       }
@@ -83,17 +116,27 @@ export class RxScanner {
     return this
   }
 
-  collectMethod(method: string) {
-    this.usedMethods[method] = true
-    return this
-  }
-
   output(outputFilename: string = "my-rx-addons.ts") {
     let output = ""
 
-    for (const usedMethod in this.usedMethods) {
-      if (this.rxAddons[usedMethod]) {
-        output += `import "${this.rxAddons[usedMethod]}"\n`
+    for (const usedClass in this.usedClasses) {
+      if (this.rxClasses[usedClass]) {
+        console.log(`use class from ${usedClass}`)
+        output += `export { ${usedClass} } from "${this.rxClasses[usedClass]}"\n`
+      }
+    }
+
+    for (const usedObservable in this.usedObservables) {
+      if (this.rxObservables[usedObservable]) {
+        console.log(`use observable ${usedObservable}`)
+        output += `import "${this.rxObservables[usedObservable]}"\n`
+      }
+    }
+
+    for (const usedOperator in this.usedOperators) {
+      if (this.rxOperators[usedOperator]) {
+        console.log(`use operator ${usedOperator}`)
+        output += `import "${this.rxOperators[usedOperator]}"\n`
       }
     }
 

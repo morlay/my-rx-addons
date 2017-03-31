@@ -1,3 +1,6 @@
+export { Observable } from "rxjs/Observable"
 import "rxjs/add/observable/interval"
+import "rxjs/add/observable/merge"
 import "rxjs/add/operator/merge"
+import "rxjs/add/operator/filter"
 import "rxjs/add/operator/mapTo"
