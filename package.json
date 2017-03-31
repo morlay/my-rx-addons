@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "ts-node ./src/command.ts src/example/** -o src/example/my-rx-addons.ts",
+    "test": "ts-node ./src/command.ts src/example/codes-with-rx.ts -o src/example/my-rx-addons.ts",
     "example": "ts-node ./src/examples/codes-with-rx.ts"
   },
   "peerDependencies": {

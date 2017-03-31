@@ -55,35 +55,49 @@ export class RxScanner {
 
   createRxMethodVisit = (checker: ts.TypeChecker) =>
     (node: ts.Node) => {
-      if (node.kind === ts.SyntaxKind.CallExpression) {
-        const callExpr = (node as ts.CallExpression)
+      switch (node.kind) {
+        case ts.SyntaxKind.ImportDeclaration:
+          const importDeclaration = node as ts.ImportDeclaration
+          if ((importDeclaration.moduleSpecifier as ts.StringLiteral).text == "rxjs") {
+            (importDeclaration.importClause.namedBindings as ts.NamedImports)
+              .elements
+              .forEach((importSpecifier: ts.ImportSpecifier) => {
+                if (importSpecifier.propertyName) {
+                  this.usedClasses[importSpecifier.propertyName.text] = true
+                }
+                if (importSpecifier.name) {
+                  this.usedClasses[importSpecifier.name.text] = true
+                }
+              })
+          }
+          break
+        case ts.SyntaxKind.CallExpression:
+          const callExpr = (node as ts.CallExpression)
 
-        if (callExpr.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
-          const propertyAccessExpression = (callExpr.expression as ts.PropertyAccessExpression)
-          const callerName = propertyAccessExpression.name
-          const callerNameText = callerName.getText()
+          if (callExpr.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
+            const propertyAccessExpression = (callExpr.expression as ts.PropertyAccessExpression)
+            const callerName = propertyAccessExpression.name
+            const callerNameText = callerName.getText()
 
-          const targetCallSignature = checker.getResolvedSignature(callExpr)
-          const returnType = targetCallSignature.getReturnType()
-          if (isTypeDeclaredInRxPkg(returnType)) {
-            if (propertyAccessExpression.expression.kind === ts.SyntaxKind.Identifier) {
-              const id = propertyAccessExpression.expression as ts.Identifier
-              const idType = checker.getTypeAtLocation(id)
-              const className = checker.symbolToString(idType.getSymbol())
-              const idNameText = id.getText()
-              if (className === idNameText) {
-                this.usedClasses[className] = true
-                this.usedObservables[callerNameText] = true
+            const targetCallSignature = checker.getResolvedSignature(callExpr)
+            const returnType = targetCallSignature.getReturnType()
+            if (isTypeDeclaredInRxPkg(returnType)) {
+              if (propertyAccessExpression.expression.kind === ts.SyntaxKind.Identifier) {
+                const expressionId = propertyAccessExpression.expression as ts.Identifier
+                const expressionIdType = checker.getTypeAtLocation(expressionId)
+                const expressionIdTypeClassName = checker.symbolToString(expressionIdType.getSymbol())
+                if (expressionIdTypeClassName === expressionId.getText()) {
+                  this.usedObservables[callerNameText] = true
+                } else {
+                  this.usedOperators[callerNameText] = true
+                }
               } else {
                 this.usedOperators[callerNameText] = true
               }
-            } else {
-              this.usedOperators[callerNameText] = true
             }
           }
-        }
+          break
       }
-
       ts.forEachChild(node, this.createRxMethodVisit(checker))
     }
 

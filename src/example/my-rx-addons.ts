@@ -1,4 +1,5 @@
 export { Observable } from "rxjs/Observable"
+export { Subscription } from "rxjs/Subscription"
 import "rxjs/add/observable/interval"
 import "rxjs/add/observable/merge"
 import "rxjs/add/operator/merge"

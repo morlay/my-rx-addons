@@ -1,4 +1,6 @@
-import { Observable } from "rxjs"
+import { Observable, Subscription as test } from "rxjs"
+
+console.log(test);
 
 const first = Observable.interval(2500)
 const second = Observable.interval(2000)
