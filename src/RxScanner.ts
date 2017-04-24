@@ -131,30 +131,37 @@ export class RxScanner {
   }
 
   output(outputFilename: string = "my-rx-addons.ts") {
-    let output = ""
+    const exportedClasses = []
 
     for (const usedClass in this.usedClasses) {
       if (this.rxClasses[usedClass]) {
         console.log(`use class from ${usedClass}`)
-        output += `export { ${usedClass} } from "${this.rxClasses[usedClass]}"\n`
+        exportedClasses.push(`export { ${usedClass} } from "${this.rxClasses[usedClass]}"`)
       }
     }
 
+    const addedObservables = []
     for (const usedObservable in this.usedObservables) {
       if (this.rxObservables[usedObservable]) {
         console.log(`use observable ${usedObservable}`)
-        output += `import "${this.rxObservables[usedObservable]}"\n`
+        addedObservables.push(`import "${this.rxObservables[usedObservable]}"`)
       }
     }
 
+    const usedOperators = []
     for (const usedOperator in this.usedOperators) {
       if (this.rxOperators[usedOperator]) {
         console.log(`use operator ${usedOperator}`)
-        output += `import "${this.rxOperators[usedOperator]}"\n`
+        usedOperators.push(`import "${this.rxOperators[usedOperator]}"`)
       }
     }
 
-    fse.outputFileSync(outputFilename, output)
+    fse.outputFileSync(outputFilename, []
+      .concat(exportedClasses)
+      .concat(addedObservables.sort())
+      .concat(usedOperators.sort())
+      .join("\n"),
+    )
     console.log(`generated file to ${outputFilename}`)
   }
 }
