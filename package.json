@@ -17,13 +17,13 @@
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "typescript": "2.2.x"
+    "typescript": "2.2.x || 2.3.x"
   },
   "devDependencies": {
     "rxjs": "5.2.x",
     "ts-node": "3.0.x",
     "tslint": "5.0.x",
-    "typescript": "2.2.x"
+    "typescript": "2.3.x"
   },
   "dependencies": {
     "@types/fs-extra": "2.0.x",

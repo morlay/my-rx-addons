@@ -6,7 +6,7 @@ import * as ts from "typescript"
 export const isTypeDeclaredInRxPkg = (type: ts.Type): boolean => {
   const symbol = type.getSymbol()
   if (symbol) {
-    const filename = symbol.getDeclarations()[0].getSourceFile().path
+    const filename = symbol.getDeclarations()[0].getSourceFile().fileName
     return filename.indexOf("node_modules/rxjs/") > -1
   }
   return false
@@ -47,7 +47,7 @@ export class RxScanner {
         if (pkgName.indexOf("observable") > -1) {
           this.rxObservables[methodName] = path.join(pkgName, methodName)
         }
-        if (pkgName == "rxjs") {
+        if (pkgName === "rxjs") {
           this.rxClasses[methodName] = path.join(pkgName, methodName)
         }
       })
@@ -58,7 +58,7 @@ export class RxScanner {
       switch (node.kind) {
         case ts.SyntaxKind.ImportDeclaration:
           const importDeclaration = node as ts.ImportDeclaration
-          if ((importDeclaration.moduleSpecifier as ts.StringLiteral).text == "rxjs") {
+          if ((importDeclaration.moduleSpecifier as ts.StringLiteral).text === "rxjs") {
             (importDeclaration.importClause.namedBindings as ts.NamedImports)
               .elements
               .forEach((importSpecifier: ts.ImportSpecifier) => {
@@ -116,13 +116,11 @@ export class RxScanner {
       }, [])
       .filter((filename: string) => [".ts", ".tsx"].indexOf(path.extname(filename)) > -1)
 
-    const filePaths = files.map((s) => s.toLowerCase())
-
     const program = ts.createProgram(files, {})
     const checker = program.getTypeChecker()
 
     for (const sourceFile of program.getSourceFiles()) {
-      if (filePaths.indexOf(sourceFile.path) > -1) {
+      if (files.indexOf(sourceFile.fileName) > -1) {
         ts.forEachChild(sourceFile, this.createRxMethodVisit(checker))
       }
     }
