@@ -1,6 +1,6 @@
 {
   "name": "@morlay/my-rx-addons",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "WTFPL",
   "bin": {
     "my-rx-addons": "./bin/my-rx-addons.js"
