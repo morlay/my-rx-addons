@@ -1,5 +1,5 @@
 import * as fse from "fs-extra"
-import * as glob from "glob"
+import * as globby from "globby"
 import * as path from "path"
 import * as ts from "typescript"
 
@@ -33,8 +33,8 @@ export class RxScanner {
   }
 
   readRxMethods() {
-    const addons = glob.sync("node_modules/rxjs/add/**/*.js")
-    const classes = glob.sync("node_modules/rxjs/*.js")
+    const addons = globby.sync("node_modules/rxjs/add/**/*.js")
+    const classes = globby.sync("node_modules/rxjs/*.js")
 
     addons
       .concat(classes)
@@ -106,14 +106,12 @@ export class RxScanner {
       throw new Error("scan need `src`")
     }
 
-    const files = src
-      .reduce((finalFiles, pattern) => {
-        return finalFiles.concat(glob.sync(pattern, {
-          nodir: true,
-          dot: true,
-          realpath: true,
-        }))
-      }, [])
+    const files = globby
+      .sync(src, {
+        nodir: true,
+        dot: true,
+        realpath: true,
+      })
       .filter((filename: string) => [".ts", ".tsx"].indexOf(path.extname(filename)) > -1)
 
     const program = ts.createProgram(files, {})
