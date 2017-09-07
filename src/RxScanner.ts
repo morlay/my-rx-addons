@@ -6,7 +6,7 @@ import * as ts from "typescript"
 export const isTypeDeclaredInRxPkg = (type: ts.Type): boolean => {
   const symbol = type.getSymbol()
   if (symbol) {
-    const filename = symbol.getDeclarations()[0].getSourceFile().fileName
+    const filename = symbol.getDeclarations()![0].getSourceFile().fileName
     return filename.indexOf("node_modules/rxjs/") > -1
   }
   return false
@@ -59,7 +59,7 @@ export class RxScanner {
         case ts.SyntaxKind.ImportDeclaration:
           const importDeclaration = node as ts.ImportDeclaration
           if ((importDeclaration.moduleSpecifier as ts.StringLiteral).text === "rxjs") {
-            (importDeclaration.importClause.namedBindings as ts.NamedImports)
+            (importDeclaration.importClause!.namedBindings as ts.NamedImports)
               .elements
               .forEach((importSpecifier: ts.ImportSpecifier) => {
                 if (importSpecifier.propertyName) {
@@ -80,12 +80,12 @@ export class RxScanner {
             const callerNameText = callerName.getText()
 
             const targetCallSignature = checker.getResolvedSignature(callExpr)
-            const returnType = targetCallSignature.getReturnType()
+            const returnType = targetCallSignature!.getReturnType()
             if (isTypeDeclaredInRxPkg(returnType)) {
               if (propertyAccessExpression.expression.kind === ts.SyntaxKind.Identifier) {
                 const expressionId = propertyAccessExpression.expression as ts.Identifier
                 const expressionIdType = checker.getTypeAtLocation(expressionId)
-                const expressionIdTypeClassName = checker.symbolToString(expressionIdType.getSymbol())
+                const expressionIdTypeClassName = checker.symbolToString(expressionIdType.getSymbol()!)
                 if (expressionIdTypeClassName === expressionId.getText()) {
                   this.usedObservables[callerNameText] = true
                 } else {
@@ -152,7 +152,7 @@ export class RxScanner {
       }
     }
 
-    fse.outputFileSync(outputFilename, []
+    fse.outputFileSync(outputFilename, ([] as string[])
       .concat(exportedClasses)
       .concat(addedObservables.sort())
       .concat(usedOperators.sort())
