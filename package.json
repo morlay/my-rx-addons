@@ -5,6 +5,8 @@
   "bin": {
     "my-rx-addons": "./bin/my-rx-addons.js"
   },
+  "types": "src/index.ts",
+  "main": "dist/index.js",
   "files": [
     "dist/",
     "src/",
@@ -13,25 +15,25 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "test": "ts-node ./src/command.ts src/example/codes-with-rx.ts -o src/example/my-rx-addons.ts",
-    "example": "ts-node ./src/examples/codes-with-rx.ts",
+    "example": "ts-node ./src/example/codes-with-rx.ts",
     "prepublish": "npm run build"
   },
   "peerDependencies": {
-    "typescript": "2.2.x || 2.3.x"
+    "typescript": "2.5.x"
   },
   "devDependencies": {
-    "rxjs": "5.2.x",
-    "ts-node": "3.0.x",
-    "tslint": "5.0.x",
-    "typescript": "2.3.x"
+    "rxjs": "5.4.x",
+    "ts-node": "3.3.x",
+    "tslint": "5.7.x",
+    "typescript": "2.5.x"
   },
   "dependencies": {
-    "@types/fs-extra": "2.0.x",
-    "@types/glob": "5.0.x",
-    "@types/node": "7.0.x",
-    "@types/yargs": "6.6.x",
-    "fs-extra": "2.1.x",
-    "glob": "7.1.x",
-    "yargs": "7.0.x"
+    "@types/fs-extra": "4.0.x",
+    "@types/node": "8.0.x",
+    "@types/yargs": "8.0.x",
+    "@types/globby": "6.1.0",
+    "globby": "6.1.0",
+    "fs-extra": "4.0.x",
+    "yargs": "8.0.x"
   }
 }
