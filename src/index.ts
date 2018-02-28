@@ -1,1 +1,1 @@
-export * from "./RxScanner"
+export * from "./RxScanner";

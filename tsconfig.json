@@ -2,21 +2,11 @@
   "compilerOptions": {
     "baseUrl": "src",
     "outDir": "dist",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "experimentalDecorators": true,
     "strict": true,
-    "moduleResolution": "node",
-    "jsx": "react",
     "module": "commonjs",
-    "target": "es2015",
-    "pretty": true,
-    "sourceMap": false,
-    "declaration": false,
-    "removeComments": true
+    "target": "es2017",
+    "skipLibCheck": true,
+    "pretty": true
   },
   "exclude": [
     "node_modules/*"
